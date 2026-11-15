@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2026 The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- No privacy dot: on these devices (no rounded corners, no cutout) it is the only
+         reason SystemUI creates the two ScreenDecorOverlay windows. The legacy msm8974
+         HWC only puts ~3 layers on hardware, so those overlays push Taskbar and
+         transition layers into GPU (client) composition, which is very slow on the
+         Adreno 330 driver. The status bar privacy chip still shows camera/mic use. -->
+    <bool name="config_enablePrivacyDot">false</bool>
+</resources>
