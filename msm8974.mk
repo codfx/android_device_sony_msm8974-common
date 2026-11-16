@@ -31,6 +31,10 @@ endif
 PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
 
+# Wi-Fi config (Android 12 reads it only from RROs targeting com.android.wifi.resources)
+PRODUCT_PACKAGES += \
+    WifiOverlayMsm8974
+
 # Audio
 PRODUCT_PACKAGES += \
     android.hardware.audio@6.0-impl \

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2026 The LineageOS Project
+
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- Hardware PNO (screen-off scanning for saved networks) through wificond / nl80211 scheduled
+         scan. Without it, Android 12 rejects disconnected PNO and never reconnects with the screen off. -->
+    <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
+
+    <!-- BCM4354 supports 5 GHz -->
+    <bool translatable="false" name="config_wifi5ghzSupport">true</bool>
+
+    <!-- Disable WPA2 -> WPA3 (SAE) auto-upgrade -->
+    <bool translatable="false" name="config_wifiSaeUpgradeEnabled">false</bool>
+</resources>
