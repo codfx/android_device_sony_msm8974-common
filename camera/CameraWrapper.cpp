@@ -39,6 +39,8 @@
 
 using namespace android;
 
+static const char KEY_VIDEO_FRAME_FORMAT[] = "video-frame-format";
+
 // Wrapper specific parameters names
 static const char KEY_SUPPORTED_ISO_MODES[] = "iso-values";
 static const char KEY_ISO_MODE[] = "iso";
@@ -257,6 +259,17 @@ static char *camera_fixup_getparams(int __attribute__((unused)) id,
         }
     }
 
+    /*
+     * The HAL's YUV video frames (VIDEO_BUFFER_MODE_DATA_CALLBACK_YUV) are NV12
+     * with the Y plane padded to 32 scanlines, the video encoder's own layout,
+     * although the HAL reports "yuv420sp". Report the real layout so that the
+     * encoder does not realign them. camera_fixup_setparams() reverts it.
+     */
+    if (params.get(KEY_VIDEO_FRAME_FORMAT) &&
+            strcmp(params.get(KEY_VIDEO_FRAME_FORMAT), "yuv420sp") == 0) {
+        params.set(KEY_VIDEO_FRAME_FORMAT, "nv12-venus");
+    }
+
     String8 strParams = params.flatten();
     char *ret = strdup(strParams.string());
 
@@ -334,6 +347,11 @@ static char *camera_fixup_setparams(int __attribute__((unused)) id,
             params.set(KEY_SONY_VIDEO_STABILISER, VALUE_SONY_OFF);
         }
         params.set(KEY_SONY_IMAGE_STABILISER, VALUE_SONY_OFF);
+    }
+
+    if (params.get(KEY_VIDEO_FRAME_FORMAT) &&
+            strcmp(params.get(KEY_VIDEO_FRAME_FORMAT), "nv12-venus") == 0) {
+        params.set(KEY_VIDEO_FRAME_FORMAT, "yuv420sp");
     }
 
 #if defined(LOG_PARAMETERS)
@@ -472,6 +490,18 @@ static int camera_store_meta_data_in_buffers(struct camera_device *device,
 
     ALOGV("%s->%08X->%08X", __FUNCTION__, (uintptr_t)device,
             (uintptr_t)(((wrapper_camera_device_t*)device)->vendor));
+
+    /*
+     * The Sony HAL's metadata ("zero copy") video buffers carry pointers that
+     * are only valid inside cameraserver; on Android 12 the encoder runs in
+     * another process and crashes on them. Refuse metadata mode so that
+     * CameraSource falls back to VIDEO_BUFFER_MODE_DATA_CALLBACK_YUV, which
+     * passes the frames through shared memory.
+     */
+    if (enable) {
+        ALOGI("%s: metadata mode not supported, use YUV callbacks", __FUNCTION__);
+        return -EINVAL;
+    }
 
     return VENDOR_CALL(device, store_meta_data_in_buffers, enable);
 }
