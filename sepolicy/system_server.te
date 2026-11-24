@@ -3,3 +3,11 @@ allow system_server proc_last_kmsg:file r_file_perms;
 get_prop(system_server, exported_camera_prop);
 get_prop(system_server, userspace_reboot_config_prop);
 get_prop(system_server, userspace_reboot_exported_prop);
+
+# The 3.4 kernel only has cgroup v1 (cpuacct, no cgroup2), so ProcessList's per-uid/pid process groups
+# live there and libprocessgroup chowns their files (cpuacct.stat, cpuacct.usage, ...); zygote has the same.
+allow system_server cgroup:file setattr;
+
+# ro.treble.enabled is false, so Build.isBuildConsistent() takes the legacy path that also reads
+# ro.bootimage.build.fingerprint. It no longer uses the value (that check is commented out).
+dontaudit system_server build_bootimage_prop:file r_file_perms;

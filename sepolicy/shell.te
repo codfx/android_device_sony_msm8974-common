@@ -1,0 +1,5 @@
+# Copyright (C) 2026 codfx
+# SPDX-License-Identifier: Apache-2.0
+
+# getprop walks every property; vendor_default_prop is vendor internal, so shell (coredomain) may not read it.
+dontaudit shell vendor_default_prop:file r_file_perms;

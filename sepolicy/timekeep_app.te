@@ -2,6 +2,7 @@ type timekeep_app, domain;
 app_domain(timekeep_app)
 
 allow timekeep_app activity_service:service_manager find;
+allow timekeep_app app_api_service:service_manager find;
 
 # Read from /data/vendor/time/ats_2
 allow timekeep_app time_data_file:dir create_dir_perms;

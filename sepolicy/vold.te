@@ -1,1 +1,4 @@
 allow vold sysfs_mmc_host:file w_file_perms;
+
+# No boot control HAL (not A/B); vold only checks whether one is registered.
+dontaudit vold hal_bootctl_hwservice:hwservice_manager find;

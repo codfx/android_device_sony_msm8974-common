@@ -1,2 +1,10 @@
+# mpdecision (sepolicy-legacy labels qualcomm.perf.cores_online, the blob reads ro.qualcomm.perf.cores_online)
+ro.qualcomm.perf.cores_online u:object_r:mpdecision_prop:s0
+system.ksm_                   u:object_r:mpdecision_prop:s0
+
 # Timekeep
 persist.vendor.timeadjust     u:object_r:vendor_timekeep_prop:s0
+
+# Video
+persist.vidc.                 u:object_r:vendor_video_prop:s0
+vidc.                         u:object_r:vendor_video_prop:s0

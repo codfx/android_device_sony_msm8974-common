@@ -1,1 +1,6 @@
 get_prop(appdomain, exported_camera_prop);
+
+# Apps probe props they cannot read: WebView/Chromium renderers hit vendor props (system/sepolicy already
+# dontaudits the read, not the open/getattr), Gallery2 reads qemu.hw.mainkeys. Both get the default value.
+dontaudit appdomain vendor_default_prop:file { getattr open map };
+dontaudit appdomain qemu_hw_prop:file r_file_perms;
